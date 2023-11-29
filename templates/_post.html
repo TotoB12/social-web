@@ -38,7 +38,6 @@ function upvote(id, elem) {
   .then(response => {
     response.json()
     console.log(response)
-    this.innerHTML = 'Upvote ' + response[0];
   })
   .catch((error) => {
     console.error('Error:', error);
