@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    {% if username %}
+        <h2 class="text-center">Welcome, {{ username }}!</h2>
+    {% endif %}
+
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Posted by {{ post.username }}</h6>
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p style='max-height: 500px; overflow: auto;' class="card-text">{{ post.text }}</p>
+                        {% if username in post.upvotes %}
+                          <button type="button" class="btn btn-success btn-sm" disabled>Upvote {{ post.upvotes|length }}</button>
+                        {% else %}
+                        <button onclick='upvote("{{ vote.id }}")' type="button" class="btn btn-success btn-sm">Upvote {{ post.upvotes|length }}</button>
+                        {% endif %}
+                        {% if username in post.downvotes %}
+                          <button type="button" class="btn btn-danger btn-sm" disabled>Downvote {{ post.downvotes|length }}</button>
+                        {% else %}
+                      <button type="button" class="btn btn-danger btn-sm">Downvote {{ post.downvotes|length }}</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

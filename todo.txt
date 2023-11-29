@@ -1,0 +1,20 @@
+- posts
+  - character limit
+  - visual limit (read more... / read less...)
+- threads
+- comments
+- edit post
+- upvotes/downvotes
+- delete own posts
+- archive threads
+- profile page
+  - profile picture
+  - change password
+- login / signup
+  - popup alerts (wrong username / user doesn't exist)
+
+- admin privileges
+  - admin badge on profile
+  - delete any kind of post
+  - ban users
+

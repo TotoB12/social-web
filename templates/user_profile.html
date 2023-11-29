@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2>{{ username }}'s Posts</h2>
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        {% if post.image %}
+                            <img src="{{ post.image }}" class="card-img-top mb-2" alt="Post Image">
+                        {% endif %}
+                        <p class="card-text">{{ post.text }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

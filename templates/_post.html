@@ -1,0 +1,48 @@
+<div class="col-md-4 mb-4">
+  <div class="card">
+      <div class="card-body">
+          {% if posts[post].username == username %}
+              <a href="/delete_post/{{ post.id }}" class="float-right" title="Delete Post">
+                  <i class="bi bi-trash-fill"></i>
+              </a>
+          {% endif %}
+          <h6 class="card-subtitle mb-2 text-muted">Posted by {{ posts[post].username }}</h6>
+          <h5 class="card-title">{{ posts[post].title }}</h5>
+          {% if posts[post].image %}
+              <img src="{{ post.image }}" class="card-img-top mb-2" alt="Post Image" style="max-height: 200px; object-fit: cover;">
+          {% endif %}
+          <p style='max-height: 500px; overflow: auto;' class="card-text">{{ posts[post].text }}</p>
+                    {% if username in posts[post].upvotes %}
+                      <button type="button" class="btn btn-success btn-sm" disabled>Upvote {{ posts[post].upvotes|length }}</button>
+                    {% else %}
+                    <button onclick='upvote("{{ post }}", this)' type="button" class="btn btn-success btn-sm">Upvote {{ posts[post].upvotes|length }}</button>
+                    {% endif %}
+                    {% if username in posts[post].downvotes %}
+                      <button type="button" class="btn btn-danger btn-sm" disabled>Downvote {{ posts[post].downvotes|length }}</button>
+                    {% else %}
+                  <button type="button" class="btn btn-danger btn-sm">Downvote {{ posts[post].downvotes|length }}</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+<script>
+function upvote(id, elem) {
+  let url = '/upvote/' + id;
+
+  fetch(url, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    response.json()
+    console.log(response)
+    this.innerHTML = 'Upvote ' + response[0];
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
+
+</script>
