@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, g
 import json
 import os
 import random
@@ -22,6 +22,12 @@ def load_users():
           return json.load(file)
       except json.JSONDecodeError:
           return {}
+
+@app.before_request
+def before_request():
+    g.username = None
+    if 'username' in session:
+        g.username = session['username']
 
 @app.route('/')
 def home():
@@ -91,7 +97,10 @@ def load_posts():
 @app.route('/u/<username>')
 def user_profile(username):
     posts = load_posts()
-    user_posts = [post for post in posts if post['username'] == username]
+    user_posts = {}
+    for post in posts:
+      if posts[post]['username'] == username:
+        user_posts[post] = posts[post]
     return render_template('user_profile.html', username=username, posts=user_posts)
 
 
@@ -119,29 +128,74 @@ def post():
 
     return render_template('post.html')
 
-@app.route('/delete_post/<int:post_id>')
+@app.route('/delete_post/<string:post_id>')
 def delete_post(post_id):
     if 'username' not in session:
         return redirect(url_for('login'))
-
+      
     posts = load_posts()
-    if posts[post_id]['username'] == session['username']:
+    if posts[post_id]["username"] == session["username"]:
       del posts[post_id]
       save_posts(posts)
     return redirect(request.referrer or url_for('home'))
 
-@app.route('/upvote/<int:post_id>', methods=['POST'])
-async def upvote(post_id):
-  posts = load_posts()
-  if posts[post_id] and not session['username'] in posts[post_id]['upvotes']:
-      posts[post_id]["upvotes"].append(session['username'])
-      save_posts(posts)
-      return jsonify(len(posts[post_id]['upvotes']))
-  return jsonify(0)
+@app.route('/upvote/<string:post_id>', methods=['POST'])
+def upvote(post_id):
+  if session['username']:
+    posts = load_posts()
+    if posts[post_id]:
+        if session['username'] not in posts[post_id]['upvotes']:
+            if session['username'] in posts[post_id]['downvotes']:
+                posts[post_id]["downvotes"].remove(session['username'])
+            posts[post_id]["upvotes"].append(session['username'])
+            
+            save_posts(posts)
+            return jsonify({'upvotes': len(posts[post_id]['upvotes']), 'downvotes': len(posts[post_id]['downvotes']), 'vote': 'upvote'})
+        else:
+            posts[post_id]["upvotes"].remove(session['username'])
+            
+            save_posts(posts)
+            return jsonify({'upvotes': len(posts[post_id]['upvotes']), 'downvotes': len(posts[post_id]['downvotes']), 'vote': ''})
+      
+    return False
+  else:
+    return redirect(url_for('login'))
+
+@app.route('/downvote/<string:post_id>', methods=['POST'])
+def downvote(post_id):
+  if not post_id:
+    return False
+  if session['username']:
+    posts = load_posts()
+    if posts[post_id]:
+          if session['username'] not in posts[post_id]['downvotes']:
+              if session['username'] in posts[post_id]['upvotes']:
+                  posts[post_id]["upvotes"].remove(session['username'])
+              posts[post_id]["downvotes"].append(session['username'])
+
+              save_posts(posts)
+              return jsonify({'upvotes': len(posts[post_id]['upvotes']), 'downvotes': len(posts[post_id]['downvotes']), 'vote': 'downvote'})
+          else:
+              posts[post_id]["downvotes"].remove(session['username'])
+              save_posts(posts)
+              return jsonify({'upvotes': len(posts[post_id]['upvotes']), 'downvotes': len(posts[post_id]['downvotes']), 'vote': ''})
+      
+    return False
+  else:
+    return redirect(url_for('login'))
+
+@app.route('/post/<string:post_id>')
+def view_post(post_id):
+    posts = load_posts()
+    post = posts[post_id]
+    if post is None:
+        return "Post not found", 404
+    return render_template('view_post.html', post=post, post_id=post_id)
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)

@@ -1,0 +1,78 @@
+<button onclick='upvote("{{ post }}", this)' type="button" class="btn btn-success btn-sm">
+  {% if g.username in posts[post].upvotes %}
+  <i class="bi bi-caret-up-fill"></i>
+  {% else %}
+  <i class="bi bi-caret-up"></i>
+  {% endif %} {{ posts[post].upvotes|length }}
+</button>
+<button onclick='downvote("{{ post }}", this)' type="button" class="btn btn-danger btn-sm">
+  {% if g.username in posts[post].downvotes %}
+  <i class="bi bi-caret-down-fill"></i>
+  {% else %}
+  <i class="bi bi-caret-down"></i>
+  {% endif %} {{ posts[post].downvotes|length }}                  
+</button>
+<script>
+
+function goToPost(id, elem, event) {
+  if (event.target.tagName !== 'button') {
+    window.location.href = "/post/" + id;
+  }
+}
+
+function upvote(id, elem) {
+  let url = '/upvote/' + id;
+
+  fetch(url, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data) {
+      if (data.vote === 'upvote') {
+        elem.innerHTML = '<i class="bi bi-caret-up-fill"></i>' + data.upvotes;
+      } else {
+        elem.innerHTML = '<i class="bi bi-caret-up"></i>' + data.upvotes;
+      }
+
+      let downvoteBtn = elem.parentElement.querySelector('.btn-danger');
+      downvoteBtn.innerHTML = '<i class="bi bi-caret-down"></i>' + data.downvotes;
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
+
+function downvote(id, elem) {
+  let url = '/downvote/' + id;
+
+  fetch(url, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data) {
+      if (data.vote === 'downvote') {
+        elem.innerHTML = '<i class="bi bi-caret-down-fill"></i>' + data.downvotes;
+      } else {
+        elem.innerHTML = '<i class="bi bi-caret-down"></i>' + data.downvotes;
+      }
+
+      let upvoteBtn = elem.parentElement.querySelector('.btn-success');
+      upvoteBtn.innerHTML = '<i class="bi bi-caret-up"></i>' + data.upvotes;
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
+
+
+</script>

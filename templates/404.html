@@ -1,32 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+{% extends 'layout.html' %}
+
+{% block content %}
+    <!-- <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             background-color: #00b050;
         }
-        .error-text {
-            font-size: 5em;
-            font-weight: bold;
-        }
-        .btn-home {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
+    </style> -->
+<link rel="stylesheet" type="text/css" href="/static/wobbly.css">
+<div style="height: 100%; display: flex; justify-content: center; align-items: center;">
     <div class="text-center">
-        <div class="error-text">404</div>
-        <p class="lead">Page not found</p>
-        <a href="/" class="btn btn-primary btn-lg btn-home">Go Home</a>
+        <div class="error-text" style="color: #00b050; font-size: 15em; font-weight: bold;"><h1>F U</h1></div>
+      <svg>
+        <filter id="scribble--0">
+          <feturbulence basefrequency="0.02" numoctaves="3" result="noise" seed="0"></feturbulence>
+          <fedisplacementmap id="displacement" in="SourceGraphic" in2="noise" scale="2"></fedisplacementmap>
+        </filter>
+        <filter id="scribble--1">
+          <feturbulence basefrequency="0.02" numoctaves="3" result="noise" seed="1"></feturbulence>
+          <fedisplacementmap in="SourceGraphic" in2="noise" scale="3"></fedisplacementmap>
+        </filter>
+        <filter id="scribble--2">
+          <feturbulence basefrequency="0.02" numoctaves="3" result="noise" seed="2"></feturbulence>
+          <fedisplacementmap in="SourceGraphic" in2="noise" scale="2"></fedisplacementmap>
+        </filter>
+        <filter id="scribble--3">
+          <feturbulence basefrequency="0.02" numoctaves="3" result="noise" seed="3"></feturbulence>
+          <fedisplacementmap in="SourceGraphic" in2="noise" scale="3"></fedisplacementmap>
+        </filter>
+        <filter id="scribble--4">
+          <feturbulence basefrequency="0.02" numoctaves="3" result="noise" seed="4"></feturbulence>
+          <fedisplacementmap in="SourceGraphic" in2="noise" scale="2"></fedisplacementmap>
+        </filter>
+      </svg>
+      
+        <p class="lead" style="font-size: 2em;">YOU MF CAN'T EVEN TYPE PROPERLY</p>
+      <br>
+      
+      {% include 'go-home_button.html' %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -8,6 +8,11 @@
     <!--icons-->
     <link rel="icon" type="image/x-icon" href="/static/greendit.png">
 </head>
+<style>
+* {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+</style>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       
@@ -15,11 +20,12 @@
       
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                {% if not username %}
+                {% if not g.username %}
                 <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
                 <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
               {% else %}
               <li class="nav-item"><a href="/post" class="btn btn-primary"><i class="bi bi-signpost-fill" style='margin-right: 5px;'></i>Post</a></li>
+              <li class="nav-item">{% include 'post_button.html' %}</li>
               <li class="nav-item"><a class='nav-link' href='/u/{{ username }}'><i class="bi bi-person-circle" style='margin-right: 5px;'></i>{{ username }}</a></li>
               <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right" style='margin-right: 5px;'></i>Logout</a></li>
               {% endif %}
@@ -30,5 +36,70 @@
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
+  
+  <script defer>
+
+  function goToPost(id, elem, targetTag) {
+    if (!(targetTag == 'BUTTON' || targetTag == 'I')) {
+      window.location.href = "/post/" + id;
+    }
+  }
+
+  function upvote(id, elem) {
+    let url = '/upvote/' + id;
+
+    fetch(url, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+        if (data.vote === 'upvote') {
+          elem.innerHTML = '<i class="bi bi-caret-up-fill"></i>';
+        } else {
+          elem.innerHTML = '<i class="bi bi-caret-up"></i>';
+        }
+
+        let downvoteBtn = elem.parentElement.querySelector('.btn-danger');
+        downvoteBtn.innerHTML = '<i class="bi bi-caret-down"></i>';
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+  function downvote(id, elem) {
+    let url = '/downvote/' + id;
+
+    fetch(url, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+        if (data.vote === 'downvote') {
+          elem.innerHTML = '<i class="bi bi-caret-down-fill"></i>';
+        } else {
+          elem.innerHTML = '<i class="bi bi-caret-down"></i>';
+        }
+
+        let upvoteBtn = elem.parentElement.querySelector('.btn-success');
+        upvoteBtn.innerHTML = '<i class="bi bi-caret-up"></i>';
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+
+  </script>
 </body>
 </html>

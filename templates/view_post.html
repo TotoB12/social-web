@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+            Posted by <a href="/u/{{ post.username }}">{{ post.username }}</a>
+        </h6>
+        {% if post.image %}
+            <div class="text-center">
+                <img src="{{ post.image }}" class="img-fluid rounded" alt="Post Image" style="max-height: 400px; object-fit: contain;">
+            </div>
+        {% endif %}
+        <p class="card-text mt-3">{{ post.text }}</p>
+    </div>
+</div>
+
+<!-- Placeholder for Upvote and Downvote Buttons -->
+<div class="mb-4">
+  <button onclick='upvote("{{ post_id }}", this)' type="button" class="btn btn-success btn-sm">
+    {% if g.username in post.upvotes %}
+    <i class="bi bi-caret-up-fill"></i>
+    {% else %}
+    <i class="bi bi-caret-up"></i>
+    {% endif %} {{ post.upvotes|length }}
+  </button>
+  <button onclick='downvote("{{ post_id }}", this)' type="button" class="btn btn-danger btn-sm">
+    {% if g.username in post.downvotes %}
+    <i class="bi bi-caret-down-fill"></i>
+    {% else %}
+    <i class="bi bi-caret-down"></i>
+    {% endif %} {{ post.downvotes|length }}                  
+  </button>
+</div>
+
+<!-- Placeholder for Comment Section -->
+<div class="card">
+    <div class="card-header">
+        Comments
+    </div>
+    <div class="card-body">
+        <p class="card-text">Comment section coming soon...</p>
+    </div>
+</div>
+
+{% endblock %}
